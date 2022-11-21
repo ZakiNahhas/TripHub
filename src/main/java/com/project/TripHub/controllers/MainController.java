@@ -129,4 +129,8 @@ public class MainController {
 		return "redirect:/admin";
 	}
 
+	@RequestMapping("/guide/test") 
+	public String showGuide() {
+		return "test.jsp";
+	}
 }

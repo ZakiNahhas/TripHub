@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -58,6 +59,19 @@ public class User {
     		)
     private List<Role> roles;
     
+    @ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "event_guests", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "event_id"))
+	private List<Event> events;
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "event_guests", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tour_id"))
+	private List<Tour> userTours;
+    
+    @OneToMany(mappedBy="guide", fetch = FetchType.LAZY)
+    private List<Tour> guidedTours;
+    @OneToMany(mappedBy="host", fetch = FetchType.LAZY)
+    private List<Event> hostedEvents;
+
     public User() {}
 
 	public Long getId() {
