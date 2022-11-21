@@ -3,13 +3,10 @@ package com.project.TripHub.controllers;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
-<<<<<<< HEAD
 import java.util.Locale;
 import java.util.SortedSet;
 import java.util.TreeSet;
-=======
 import java.util.List;
->>>>>>> bd0cc61cf6288d00d20a885034b77ac3fd9d9b1b
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,10 +27,8 @@ import com.project.TripHub.models.Event;
 import com.project.TripHub.models.GuideRequest;
 import com.project.TripHub.models.Tour;
 import com.project.TripHub.models.User;
-<<<<<<< HEAD
 import com.project.TripHub.services.AppService;
-=======
->>>>>>> bd0cc61cf6288d00d20a885034b77ac3fd9d9b1b
+
 import com.project.TripHub.services.UserService;
 
 @Controller
