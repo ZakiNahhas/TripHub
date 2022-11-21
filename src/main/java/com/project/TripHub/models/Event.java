@@ -34,7 +34,7 @@ public class Event {
 	@NotEmpty(message="name cannot be empty")
 	String eventName;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "host_id")
 	private User host;
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -90,7 +90,7 @@ public class Event {
 	}
 
 	public void setHost(User host) {
-		host = host;
+		this.host = host;
 	}
 
 	public List<User> getGuests() {
@@ -98,7 +98,7 @@ public class Event {
 	}
 
 	public void setGuests(List<User> guests) {
-		guests = guests;
+		this.guests = guests;
 	}
 
 	public String getDescription() {

@@ -16,7 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.validation.constraints.Future;
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -34,7 +34,7 @@ public class Tour {
 	String tourName;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "guide_id")
-	private User guide;
+	private Guide guide;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "tour_guests", joinColumns = @JoinColumn(name = "tour_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
@@ -44,7 +44,7 @@ public class Tour {
 	@Size(min = 3, message = "description has to be min 3 characters")
 	private String description;
 
-	@Future
+	@FutureOrPresent
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date tourDate;
 
@@ -60,12 +60,12 @@ public class Tour {
 		this.tourName = tourName;
 	}
 
-	public User getGuide() {
+	public Guide getGuide() {
 		return guide;
 	}
 
-	public void setGuide(User guide) {
-		guide = guide;
+	public void setGuide(Guide guide) {
+		this.guide = guide;
 	}
 
 	public List<User> getTourGuests() {
@@ -73,7 +73,7 @@ public class Tour {
 	}
 
 	public void setTourGuests(List<User> guests) {
-		tourGuests = tourGuests;
+		this.tourGuests = tourGuests;
 	}
 
 	public String getDescription() {
