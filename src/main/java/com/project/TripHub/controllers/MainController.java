@@ -2,7 +2,9 @@ package com.project.TripHub.controllers;
 
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -12,14 +14,15 @@ import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.project.TripHub.services.UserService;
 import com.project.TripHub.Validator.UserValidator;
 import com.project.TripHub.models.User;
+import com.project.TripHub.services.UserService;
 
 @Controller
 public class MainController {
