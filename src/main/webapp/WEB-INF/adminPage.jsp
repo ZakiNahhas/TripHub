@@ -89,7 +89,7 @@
 </div>
 </div>
 
-<div class="container"> 
+<div class="container col-5"> 
    	<h3>Guide requests</h3>
 	<table class="table table-light">
 	<thead> 

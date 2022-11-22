@@ -1,13 +1,16 @@
 package com.project.TripHub.models;
 
 
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "files")
@@ -23,7 +26,10 @@ public class FileDB {
 
     @Lob
     private byte[] data;
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="event_id")
+    private Event event;
+    
     public FileDB() {
     }
 
@@ -60,4 +66,13 @@ public class FileDB {
     public void setData(byte[] data) {
         this.data = data;
     }
+
+	public Event getEvent() {
+		return event;
+	}
+
+	public void setEvent(Event event) {
+		this.event = event;
+	}
+    
 }

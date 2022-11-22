@@ -44,11 +44,17 @@ public class Event {
 	@NotNull(message = "description can't be blank")
 	@Size(min = 3, message = "description has to be min 3 characters")
 	private String description;
-
+	@NotNull(message = "location can't be blank")
+	@Size(min = 3, message = "location has to be min 3 characters")
+	private String location;
+	@Size(min = 3, message = "participants has to be minimum 3 persons")
+	private int participants;
 	@Future
     @DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date eventDate;
-
+	
+	@OneToMany(mappedBy="event", fetch = FetchType.EAGER)
+    private List<FileDB> images;	
 	@Column(updatable = false)
 	private Date createdAt;
 	private Date updatedAt;
@@ -97,6 +103,14 @@ public class Event {
 		return guests;
 	}
 
+	public List<FileDB> getImages() {
+		return images;
+	}
+
+	public void setImages(List<FileDB> images) {
+		this.images = images;
+	}
+
 	public void setGuests(List<User> guests) {
 		this.guests = guests;
 	}
@@ -115,6 +129,22 @@ public class Event {
 
 	public void setEventDate(Date eventDate) {
 		this.eventDate = eventDate;
+	}
+
+	public int getParticipants() {
+		return participants;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public void setParticipants(int participants) {
+		this.participants = participants;
 	}
 
 	public Date getCreatedAt() {

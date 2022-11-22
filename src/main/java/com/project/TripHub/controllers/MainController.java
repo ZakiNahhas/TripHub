@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -132,19 +131,44 @@ public class MainController {
 	}
 
 	@GetMapping("/trips/newevent")
-	public String newEvent() {
+	public String newEvent(@ModelAttribute("newEvent") Event event) {
 		return "newEvent.jsp";
 	}
 
-	@GetMapping("/trips/addNewEvent")
-	public String createNewEvent(@Valid @ModelAttribute("newEvent") Event event, Principal principal) {
+	@PostMapping("/trips/addNewEvent")
+	public String createNewEvent(@Valid @ModelAttribute("newEvent") Event event, BindingResult result, Principal principal) {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
 		event.setHost(user);
 		appService.saveEvent(event);
 		return "redirect:/trips/" + event.getId() + "/events";
 	}
+	
+	@GetMapping("/trips/newTour")
+	public String newTour(Principal principal, Model model) {
+		String email = principal.getName();
+		User user = userService.findByEmail(email);
+		if (user.getGuide() == null) {
+			return "redirect:/home";
+		}
+		model.addAttribute("user", user);
+		return "guideForm.jsp";
+	}
 
+	@PostMapping("/trips/addNewTour")
+	public String addNewTour(@Valid @ModelAttribute("newTour") GuideRequest request, BindingResult result,
+			Principal principal, Model model) {
+		if (result.hasErrors()) {
+			return "newTour.jsp";
+		}
+		String email = principal.getName();
+		User user = userService.findByEmail(email);
+		request.setUser(user);
+		appService.saveGuideRequest(request);
+		model.addAttribute("newTour", new GuideRequest());
+		model.addAttribute("user", user);
+		return "redirect:/";
+	}
 	@GetMapping("/trips/newguide")
 	public String newGuide(Principal principal, Model model) {
 		String email = principal.getName();
