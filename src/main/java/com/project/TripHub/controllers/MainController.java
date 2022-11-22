@@ -12,7 +12,6 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,18 +19,22 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.project.TripHub.Validator.UserValidator;
+import com.project.TripHub.models.EmailDetails;
 import com.project.TripHub.models.Event;
 import com.project.TripHub.models.GuideRequest;
 import com.project.TripHub.models.Tour;
 import com.project.TripHub.models.User;
 import com.project.TripHub.services.AppService;
+import com.project.TripHub.services.EmailService;
 import com.project.TripHub.services.UserService;
-
-@Controller
+@RequestMapping("/")
+@RestController
 public class MainController {
 	@Autowired
 	private UserService userService;
@@ -39,11 +42,15 @@ public class MainController {
 	private UserValidator userValidator;
 	@Autowired
 	private AppService appService;
+	@Autowired
+	private EmailService emailService;
 
-	public MainController(UserService userService, UserValidator userValidator, AppService appService) {
+	public MainController(UserService userService, UserValidator userValidator, AppService appService,
+			EmailService emailService) {
 		this.userService = userService;
 		this.userValidator = userValidator;
 		this.appService = appService;
+		this.emailService = emailService;
 	}
 
 	@RequestMapping("/register")
@@ -132,14 +139,14 @@ public class MainController {
 
 		return "home.jsp";
 	}
+
 	@GetMapping("/trips/newevent")
 	public String newEvent() {
 		return "newEvent.jsp";
 	}
 
 	@GetMapping("/trips/newguide")
-	public String newGuide(
-			Principal principal, Model model) {
+	public String newGuide(Principal principal, Model model) {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
 		if (user.getGuideRequest() != null) {
@@ -218,5 +225,22 @@ public class MainController {
 	@RequestMapping("/guide/test")
 	public String showGuide() {
 		return "test.jsp";
+	}
+
+	// Sending a simple Email
+	@PostMapping("/sendMail")
+	public String sendMail(@RequestBody EmailDetails details) {
+		System.out.println("++++++++++");
+		String status = emailService.sendSimpleMail(details);
+	
+		return status;
+	}
+
+	// Sending email with attachment
+	@PostMapping("/sendMailWithAttachment")
+	public String sendMailWithAttachment(@RequestBody EmailDetails details) {
+		String status = emailService.sendMailWithAttachment(details);
+
+		return status;
 	}
 }
