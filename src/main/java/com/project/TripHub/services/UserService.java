@@ -48,6 +48,11 @@ public class UserService {
 		return userRepo.save(user);
 	}
 	
+	public User upgradeUserToGuide(User user) {
+		user.setRoles(roleRepo.findByName("ROLE_GUIDE"));
+		return userRepo.save(user);
+	}
+	
 	public void deleteUser(User user) {
 		userRepo.delete(user);
 	}

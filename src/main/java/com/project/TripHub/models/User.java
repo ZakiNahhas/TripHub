@@ -63,7 +63,9 @@ public class User {
 
     @OneToOne(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     private Guide guide;
+    @OneToOne(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     
+    private GuideRequest guideRequest;
     @ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "event_guests", joinColumns = @JoinColumn(name = "host_id"), inverseJoinColumns = @JoinColumn(name = "event_id"))
 	private List<Event> events;
@@ -180,6 +182,14 @@ public class User {
 
 	public void setHostedEvents(List<Event> hostedEvents) {
 		this.hostedEvents = hostedEvents;
+	}
+
+	public GuideRequest getGuideRequest() {
+		return guideRequest;
+	}
+
+	public void setGuideRequest(GuideRequest guideRequest) {
+		this.guideRequest = guideRequest;
 	}
     
 }

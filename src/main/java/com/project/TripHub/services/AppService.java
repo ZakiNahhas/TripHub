@@ -154,13 +154,12 @@ public class AppService {
 	public void deleteGuide(Guide guide) {
 		guideRepo.delete(guide);
 	}
-	public Guide approveGuide(Guide request, Long userId) {
+	public void approveGuide(GuideRequest request) {
 		Guide newGuide = new Guide();
-		User user = userService.findById(userId);
-		newGuide.setUser(user);
+		userService.upgradeUserToGuide(request.getUser());
 		newGuide.setLanguages(request.getLanguages());
 		newGuide.setLicense(request.getLicense());
-		return guideRepo.save(newGuide);
+		guideRepo.save(newGuide);
 	}
 	
 }

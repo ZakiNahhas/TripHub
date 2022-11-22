@@ -1,24 +1,25 @@
 package com.project.TripHub.controllers;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -28,14 +29,15 @@ import com.project.TripHub.models.GuideRequest;
 import com.project.TripHub.models.Tour;
 import com.project.TripHub.models.User;
 import com.project.TripHub.services.AppService;
-
 import com.project.TripHub.services.UserService;
 
 @Controller
 public class MainController {
-
+	@Autowired
 	private UserService userService;
+	@Autowired
 	private UserValidator userValidator;
+	@Autowired
 	private AppService appService;
 
 	public MainController(UserService userService, UserValidator userValidator, AppService appService) {
@@ -89,7 +91,7 @@ public class MainController {
 		userService.upgradeUser(user);
 
 		model.addAttribute("users", userService.allUsers());
-
+		model.addAttribute("guideRequests", appService.allGuideRequest());
 		return "redirect:/admin";
 	}
 
@@ -130,24 +132,65 @@ public class MainController {
 
 		return "home.jsp";
 	}
+	@GetMapping("/trips/newevent")
+	public String newEvent() {
+		return "newEvent.jsp";
+	}
 
-//	@RequestMapping("/guides/approve/{id}")
-	
-	@GetMapping("/trips/guidenew")
-	public String newGuide(@Valid @ModelAttribute("newGuide") GuideRequest request, BindingResult result, Principal principal, Model model) {
+	@GetMapping("/trips/newguide")
+	public String newGuide(
+			Principal principal, Model model) {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
+		if (user.getGuideRequest() != null) {
+			return "redirect:/";
+		}
 		SortedSet<String> allLanguages = new TreeSet<String>();
 		String[] choiceLanguages = Locale.getISOLanguages();
-		for (int i = 0; i < choiceLanguages.length; i++){
-		    Locale loc = new Locale(choiceLanguages[i]);
-		    allLanguages.add(loc.getDisplayLanguage());
+		for (int i = 0; i < choiceLanguages.length; i++) {
+			Locale loc = new Locale(choiceLanguages[i]);
+			allLanguages.add(loc.getDisplayLanguage());
 		}
-		model.addAttribute("choiceLanguages", choiceLanguages);
+		System.out.println(user.getGuideRequest());
+		model.addAttribute("newGuide", new GuideRequest());
+		model.addAttribute("choiceLanguages", allLanguages);
 		model.addAttribute("user", user);
 		return "guideForm.jsp";
 	}
-	
+
+	@PostMapping("/trips/addNewGuideRequest")
+	public String addNewGuideRequest(@Valid @ModelAttribute("newGuide") GuideRequest request, BindingResult result,
+			Principal principal, Model model) {
+		if (result.hasErrors()) {
+			System.out.println(request.getLicense());
+			return "guideForm.jsp";
+		}
+		String email = principal.getName();
+		User user = userService.findByEmail(email);
+		request.setUser(user);
+		appService.saveGuideRequest(request);
+		model.addAttribute("newGuide", new GuideRequest());
+		model.addAttribute("user", user);
+		return "redirect:/";
+	}
+
+	@PutMapping("/guides/approveGuide/{id}")
+	public String approveGuideRequest(@PathVariable("id") Long guideRequestId) {
+		GuideRequest request = appService.findByGuideRequestId(guideRequestId);
+		appService.approveGuide(request);
+		return "redirect:/admin";
+	}
+
+	@RequestMapping("/delete/guide/{id}")
+	public String deleteGuideRequest(@PathVariable("id") Long id, HttpSession session, Model model) {
+		GuideRequest request = appService.findByGuideRequestId(id);
+		appService.deleteGuideRequest(request);
+
+		model.addAttribute("users", userService.allUsers());
+
+		return "redirect:/admin";
+	}
+
 	@RequestMapping("/delete/tour/{id}")
 	public String deleteTour(@PathVariable("id") Long id, HttpSession session, Model model) {
 		Tour tour = appService.findByTourId(id);

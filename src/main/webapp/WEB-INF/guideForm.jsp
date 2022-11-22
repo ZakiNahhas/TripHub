@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<requires-namespaced-parameters>false</requires-namespaced-parameters>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -20,7 +21,7 @@
     <c:out value="${errorMessage}"></c:out>
 </c:if>
     
-<form:form action="/makeguide/{user.id}" method="post" modelAttribute="newGuide">
+<form:form action="/trips/addNewGuideRequest" method="POST" modelAttribute="newGuide">
 	<table>
 		<thead>
 	    	<tr>
@@ -35,6 +36,7 @@
 	            <form:select path="languages" placeholder="Choose a Language..." class="form-controll">
                     <c:forEach var="lang" items="${choiceLanguages }" >
 		            	  <option value="${lang}" class="text-capitalize w-100">${lang}</option>
+		            	  
                     </c:forEach>
                  </form:select>
 	            </td>
@@ -42,7 +44,7 @@
             <tr>
                 <td class="float-left">License:</td>
                 <td class="float-left">                     
-                  <form:input type="number" path="license"/>
+                  <form:input type="number" path="license" /> 
                   <form:errors path="license" class="text-danger"/>
 	            </td>
             </tr>

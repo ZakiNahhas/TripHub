@@ -18,7 +18,6 @@
 <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
-
 <div class="container">
 <h1>Welcome, ${currentUser.firstName}</h1>
 <form id="logoutForm" method="POST" action="/logout">
@@ -26,6 +25,8 @@
     <input type="submit" value="Logout!"  class="btn btn-outline-danger"/>
 </form>
 </div>
+<div class="d-flex">
+
 <div class="container">
 <h2> All Users </h2>
 <table class="table table-dark">
@@ -59,9 +60,9 @@
     </tbody>
 	</table>
 </div>
-<div> 
+<div class="container"> 
    	<h3>Guide requests</h3>
-	<table>
+	<table class="table table-dark">
 	<thead> 
     	<tr>
     		<th>Name</th>
@@ -74,12 +75,12 @@
    		        <tr>
 					<td>${user.firstName} ${user.lastName}</td>
 					<td>${user.email}</td>
-				    <td><a href="/approve/guiderequest/{user.id}">approve</a> <a href="/delete/guiderequest/{user.id}">delete</a>/td>
+				    <td><a href="/guides/approveGuide/{user.id}">approve</a> <a href="/delete/guiderequest/{user.id}">delete</a>/td>
 				</tr>
 		</c:forEach>
     </tbody>
 	</table>
 </div>
-
+</div>
 </body>
 </html>
