@@ -1,6 +1,5 @@
 package com.project.TripHub.models;
 
-
 import java.util.Date;
 import java.util.List;
 
@@ -22,63 +21,59 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-	@Size(min=3, max=30)
-    private String firstName;
-    
-	@Size(min=3, max=30)
-    private String lastName;
-    
-	@Size(min=5)
-    private String email;
-    
-	@Size(min=5)
-    private String password;
-    
-    @Transient
-    private String confirm;
-    
-    @Column(updatable=false)
-    private Date createdAt;
-    
-    @PrePersist
-    protected void onCreate(){
-        this.createdAt = new Date();
-    }
-    
-    private Date lastLogin;
-    
-    @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(
-    		name = "user_roles",
-    		joinColumns = @JoinColumn(name = "user_id"),
-    		inverseJoinColumns = @JoinColumn(name = "role_id")
-    		)
-    private List<Role> roles;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @OneToOne(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-    private Guide guide;
-    @OneToOne(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-    
-    private GuideRequest guideRequest;
-    @ManyToMany(fetch = FetchType.LAZY)
+	@Size(min = 3, max = 30)
+	private String firstName;
+
+	@Size(min = 3, max = 30)
+	private String lastName;
+
+	@Size(min = 5)
+	private String email;
+
+	@Size(min = 5)
+	private String password;
+
+	@Transient
+	private String confirm;
+
+	@Column(updatable = false)
+	private Date createdAt;
+
+	@PrePersist
+	protected void onCreate() {
+		this.createdAt = new Date();
+	}
+
+	private Date lastLogin;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private List<Role> roles;
+
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Guide guide;
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+	private GuideRequest guideRequest;
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "event_guests", joinColumns = @JoinColumn(name = "host_id"), inverseJoinColumns = @JoinColumn(name = "event_id"))
 	private List<Event> events;
-    
-    @ManyToMany(fetch = FetchType.LAZY)
+
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "tour_guests", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tour_id"))
 	private List<Tour> userTours;
-    
-    
-    @OneToMany(mappedBy="host", fetch = FetchType.LAZY)
-    private List<Event> hostedEvents;
 
-    public User() {}
+	@OneToMany(mappedBy = "host", fetch = FetchType.LAZY)
+	private List<Event> hostedEvents;
+
+	public User() {
+	}
 
 	public Long getId() {
 		return id;
@@ -191,5 +186,5 @@ public class User {
 	public void setGuideRequest(GuideRequest guideRequest) {
 		this.guideRequest = guideRequest;
 	}
-    
+
 }
