@@ -4,17 +4,15 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -27,11 +25,10 @@ public class Guide {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotNull(message="liecnse number cannot be empty")
+	@NotNull(message = "liecnse number cannot be empty")
 	private Long license;
-
-	@ElementCollection
-	private List<String> languages;
+	@OrderColumn
+	private String languages;
 
 	@Column(updatable = false)
 	private Date createdAt;
@@ -74,11 +71,11 @@ public class Guide {
 		this.id = id;
 	}
 
-	public List<String> getLanguages() {
+	public String getLanguages() {
 		return languages;
 	}
 
-	public void setLanguages(List<String> languages) {
+	public void setLanguages(String languages) {
 		this.languages = languages;
 	}
 

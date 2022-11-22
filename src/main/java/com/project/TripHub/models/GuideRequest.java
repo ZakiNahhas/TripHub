@@ -1,10 +1,8 @@
 package com.project.TripHub.models;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -23,26 +21,25 @@ public class GuideRequest {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
-	@Column
-	@ElementCollection
-	private List<String> languages;
+	@NotNull
+	private String languages;
 	@Column
 	@NotNull(message = "liecnse number cannot be empty")
 	Long license;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
-
 	User user;
+	
 	@Column(updatable = false)
 	private Date createdAt;
 	private Date updatedAt;
 
-	public List<String> getLanguages() {
+	public String getLanguages() {
 		return languages;
 	}
 
-	public void setLanguages(List<String> languages) {
+	public void setLanguages(String languages) {
 		this.languages = languages;
 	}
 

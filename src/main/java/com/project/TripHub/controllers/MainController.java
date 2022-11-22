@@ -2,9 +2,6 @@ package com.project.TripHub.controllers;
 
 import java.security.Principal;
 import java.util.Date;
-import java.util.Locale;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -12,45 +9,35 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.project.TripHub.Validator.UserValidator;
-import com.project.TripHub.models.EmailDetails;
 import com.project.TripHub.models.Event;
+import com.project.TripHub.models.Guide;
 import com.project.TripHub.models.GuideRequest;
 import com.project.TripHub.models.Tour;
 import com.project.TripHub.models.User;
 import com.project.TripHub.services.AppService;
-import com.project.TripHub.services.EmailService;
 import com.project.TripHub.services.UserService;
-@RequestMapping("/")
-@RestController
-public class MainController {
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private UserValidator userValidator;
-	@Autowired
-	private AppService appService;
-	@Autowired
-	private EmailService emailService;
 
-	public MainController(UserService userService, UserValidator userValidator, AppService appService,
-			EmailService emailService) {
+@Controller
+public class MainController {
+	private UserService userService;
+	private UserValidator userValidator;
+	private AppService appService;
+
+	public MainController(UserService userService, UserValidator userValidator, AppService appService) {
 		this.userService = userService;
 		this.userValidator = userValidator;
 		this.appService = appService;
-		this.emailService = emailService;
 	}
 
 	@RequestMapping("/register")
@@ -88,6 +75,8 @@ public class MainController {
 		String email = principal.getName();
 		model.addAttribute("currentUser", userService.findByEmail(email));
 		model.addAttribute("users", userService.allUsers());
+		model.addAttribute("allGuides", appService.allGuide());
+
 		return "adminPage.jsp";
 	}
 
@@ -99,6 +88,7 @@ public class MainController {
 
 		model.addAttribute("users", userService.allUsers());
 		model.addAttribute("guideRequests", appService.allGuideRequest());
+
 		return "redirect:/admin";
 	}
 
@@ -132,6 +122,7 @@ public class MainController {
 					|| user.getRoles().get(0).getName().contains("ROLE_ADMIN")) {
 				model.addAttribute("currentUser", userService.findByEmail(email));
 				model.addAttribute("users", userService.allUsers());
+				model.addAttribute("guideRequests", appService.allGuideRequest());
 				return "adminPage.jsp";
 			}
 			// All other users are redirected to the home page
@@ -145,22 +136,24 @@ public class MainController {
 		return "newEvent.jsp";
 	}
 
+	@GetMapping("/trips/addNewEvent")
+	public String createNewEvent(@Valid @ModelAttribute("newEvent") Event event, Principal principal) {
+		String email = principal.getName();
+		User user = userService.findByEmail(email);
+		event.setHost(user);
+		appService.saveEvent(event);
+		return "redirect:/trips/" + event.getId() + "/events";
+	}
+
 	@GetMapping("/trips/newguide")
 	public String newGuide(Principal principal, Model model) {
 		String email = principal.getName();
 		User user = userService.findByEmail(email);
 		if (user.getGuideRequest() != null) {
-			return "redirect:/";
+			return "redirect:/home";
 		}
-		SortedSet<String> allLanguages = new TreeSet<String>();
-		String[] choiceLanguages = Locale.getISOLanguages();
-		for (int i = 0; i < choiceLanguages.length; i++) {
-			Locale loc = new Locale(choiceLanguages[i]);
-			allLanguages.add(loc.getDisplayLanguage());
-		}
-		System.out.println(user.getGuideRequest());
+
 		model.addAttribute("newGuide", new GuideRequest());
-		model.addAttribute("choiceLanguages", allLanguages);
 		model.addAttribute("user", user);
 		return "guideForm.jsp";
 	}
@@ -169,7 +162,6 @@ public class MainController {
 	public String addNewGuideRequest(@Valid @ModelAttribute("newGuide") GuideRequest request, BindingResult result,
 			Principal principal, Model model) {
 		if (result.hasErrors()) {
-			System.out.println(request.getLicense());
 			return "guideForm.jsp";
 		}
 		String email = principal.getName();
@@ -181,14 +173,15 @@ public class MainController {
 		return "redirect:/";
 	}
 
-	@PutMapping("/guides/approveGuide/{id}")
+	@PostMapping("/guides/approveGuide/{id}")
 	public String approveGuideRequest(@PathVariable("id") Long guideRequestId) {
 		GuideRequest request = appService.findByGuideRequestId(guideRequestId);
 		appService.approveGuide(request);
+		appService.deleteGuideRequest(request);
 		return "redirect:/admin";
 	}
 
-	@RequestMapping("/delete/guide/{id}")
+	@RequestMapping("/delete/guiderequest/{id}")
 	public String deleteGuideRequest(@PathVariable("id") Long id, HttpSession session, Model model) {
 		GuideRequest request = appService.findByGuideRequestId(id);
 		appService.deleteGuideRequest(request);
@@ -222,25 +215,18 @@ public class MainController {
 		return "redirect:/admin";
 	}
 
+	@RequestMapping("/delete/{id}/guide")
+	public String deleteGuide(@PathVariable("id") Long id, HttpSession session, Model model) {
+		Guide guide = appService.findByGuideId(id);
+		appService.deleteGuide(guide);
+
+		model.addAttribute("users", userService.allUsers());
+
+		return "redirect:/admin";
+	}
+
 	@RequestMapping("/guide/test")
 	public String showGuide() {
 		return "test.jsp";
-	}
-
-	// Sending a simple Email
-	@PostMapping("/sendMail")
-	public String sendMail(@RequestBody EmailDetails details) {
-		System.out.println("++++++++++");
-		String status = emailService.sendSimpleMail(details);
-	
-		return status;
-	}
-
-	// Sending email with attachment
-	@PostMapping("/sendMailWithAttachment")
-	public String sendMailWithAttachment(@RequestBody EmailDetails details) {
-		String status = emailService.sendMailWithAttachment(details);
-
-		return status;
 	}
 }

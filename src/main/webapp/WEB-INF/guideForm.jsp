@@ -33,12 +33,8 @@
 	            <td class="float-left">Languages:</td>
 	            <td class="float-left">
 	            <form:errors path="languages" class="text-danger"/>    
-	            <form:select path="languages" placeholder="Choose a Language..." class="form-controll">
-                    <c:forEach var="lang" items="${choiceLanguages }" >
-		            	  <option value="${lang}" class="text-capitalize w-100">${lang}</option>
-		            	  
-                    </c:forEach>
-                 </form:select>
+	           	                  <form:input type="text" path="languages" /> 
+	           	
 	            </td>
 	        </tr>
             <tr>

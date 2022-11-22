@@ -29,7 +29,7 @@
 
 <div class="container">
 <h2> All Users </h2>
-<table class="table table-dark">
+<table class="table table-light">
     <thead> 
     	<tr>
     		<th>Name</th>
@@ -62,7 +62,7 @@
 </div>
 <div class="container"> 
    	<h3>Guide requests</h3>
-	<table class="table table-dark">
+	<table class="table table-light">
 	<thead> 
     	<tr>
     		<th>Name</th>
@@ -71,16 +71,47 @@
     	</tr>
     </thead>
     <tbody>
-    	<c:forEach var="user" items="${guideRequests}">
+    	<c:forEach var="guideReq" items="${guideRequests}">
    		        <tr>
-					<td>${user.firstName} ${user.lastName}</td>
-					<td>${user.email}</td>
-				    <td><a href="/guides/approveGuide/{user.id}">approve</a> <a href="/delete/guiderequest/{user.id}">delete</a>/td>
+					<td>${guideReq.user.firstName} ${guideReq.user.lastName}</td>
+					<td>${guideReq.user.email}</td>
+				    <td class="d-flex">
+	<form:form action="/guides/approveGuide/${guideReq.id}" method="post">
+		<input type="hidden" value="${guideReq.id}"/>
+		<input type="submit" value="Approve" class="btn btn-outline-primary"/>
+	</form:form>
+	 <a href="/delete/guiderequest/${guideReq.id}" class="btn btn-outline-danger">delete</a></td>
 				</tr>
 		</c:forEach>
     </tbody>
 	</table>
+	
 </div>
+</div>
+
+<div class="container"> 
+   	<h3>Guide requests</h3>
+	<table class="table table-light">
+	<thead> 
+    	<tr>
+    		<th>Name</th>
+    		<th>Email</th>
+    		<th>Action</th>
+    	</tr>
+    </thead>
+    <tbody>
+    	<c:forEach var="guide" items="${allGuides}">
+   		        <tr>
+					<td>${guide.user.firstName} ${guide.user.lastName}</td>
+					<td>${guide.user.email}</td>
+				    <td class="d-flex">
+
+	 <a href="/delete/${guide.id}/guide" class="btn btn-outline-danger">Remove</a></td>
+				</tr>
+		</c:forEach>
+    </tbody>
+	</table>
+	
 </div>
 </body>
 </html>

@@ -124,6 +124,9 @@ public class AppService {
 	public List<GuideRequest> allGuideRequest() {
 		return guideRequestRepo.findAll();
 	}
+	public List<Guide> allGuide() {
+		return guideRepo.findAll();
+	}
 	
 	public void saveGuideRequest (GuideRequest request) {
 		guideRequestRepo.save(request);
@@ -157,8 +160,10 @@ public class AppService {
 	public void approveGuide(GuideRequest request) {
 		Guide newGuide = new Guide();
 		userService.upgradeUserToGuide(request.getUser());
-		newGuide.setLanguages(request.getLanguages());
+		String languages= request.getLanguages();
+		newGuide.setLanguages(languages);
 		newGuide.setLicense(request.getLicense());
+		newGuide.setUser(request.getUser());
 		guideRepo.save(newGuide);
 	}
 	
